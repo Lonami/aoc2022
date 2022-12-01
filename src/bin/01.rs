@@ -54,9 +54,16 @@ fn find_most_calories(elves: &[Elf]) -> i32 {
         .expect("empty elves list")
 }
 
+fn top_highest_calories_total(elves: &[Elf], top_count: usize) -> i32 {
+    let mut calories = elves.iter().map(|elf| elf.total_calories()).collect::<Vec<_>>();
+    calories.sort();
+    calories.into_iter().rev().take(top_count).sum()
+}
+
 fn main() -> Result<()> {
     let input = parse_input(&fs::read_to_string("inputs/01/1")?)?;
     println!("Part 1 answer: {}", find_most_calories(&input));
+    println!("Part 2 answer: {}", top_highest_calories_total(&input, 3));
     Ok(())
 }
 
@@ -68,6 +75,13 @@ mod tests {
     fn example1() -> Result<()> {
         let input = parse_input(&fs::read_to_string("inputs/01/1.test")?)?;
         assert_eq!(find_most_calories(&input), 24000);
+        Ok(())
+    }
+
+    #[test]
+    fn example2() -> Result<()> {
+        let input = parse_input(&fs::read_to_string("inputs/01/1.test")?)?;
+        assert_eq!(top_highest_calories_total(&input, 3), 45000);
         Ok(())
     }
 }
