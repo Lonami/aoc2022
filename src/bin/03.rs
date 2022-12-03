@@ -32,6 +32,23 @@ fn find_shared_items(rucksacks: &[Rucksack]) -> Vec<Item> {
         .collect()
 }
 
+fn sum_group_shared_priorities(rucksacks: &[Rucksack], group_size: usize) -> i32 {
+    rucksacks
+        .chunks_exact(group_size)
+        .map(|group| {
+            group
+                .iter()
+                .map(|rucksack| {
+                    rucksack
+                        .iter()
+                        .fold(0u64, |bitset, item| bitset | (1 << get_priority(*item)))
+                })
+                .fold(u64::MAX, |aggr_bitset, bitset| aggr_bitset & bitset)
+                .trailing_zeros() as i32
+        })
+        .sum()
+}
+
 fn main() -> Result<()> {
     let input = parse_input(&fs::read_to_string("inputs/03/1")?)?;
     println!(
@@ -41,6 +58,7 @@ fn main() -> Result<()> {
             .map(get_priority)
             .sum::<i32>()
     );
+    println!("Part 2 answer: {}", sum_group_shared_priorities(&input, 3));
     Ok(())
 }
 
@@ -58,6 +76,13 @@ mod tests {
                 .sum::<i32>(),
             157
         );
+        Ok(())
+    }
+
+    #[test]
+    fn example2() -> Result<()> {
+        let input = parse_input(&fs::read_to_string("inputs/03/1.test")?)?;
+        assert_eq!(sum_group_shared_priorities(&input, 3), 70);
         Ok(())
     }
 }
