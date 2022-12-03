@@ -74,7 +74,8 @@ impl PlayResult {
 
 impl Play {
     fn assumed_score(&self) -> i32 {
-        self.expected.assume_hand().score() + self.expected.assume_hand().beats(self.opponet).score()
+        self.expected.assume_hand().score()
+            + self.expected.assume_hand().beats(self.opponet).score()
     }
 
     fn score(&self) -> i32 {
@@ -87,7 +88,7 @@ fn parse_hand(chr: u8) -> Result<Hand> {
         b'A' | b'X' => Ok(Hand::Rock),
         b'B' | b'Y' => Ok(Hand::Paper),
         b'C' | b'Z' => Ok(Hand::Scissors),
-        _ => Err("bad hand".into())
+        _ => Err("bad hand".into()),
     }
 }
 
@@ -96,20 +97,18 @@ fn parse_victory_result(chr: u8) -> Result<PlayResult> {
         b'X' => Ok(PlayResult::Defeat),
         b'Y' => Ok(PlayResult::Draw),
         b'Z' => Ok(PlayResult::Victory),
-        _ => Err("bad play result".into())
+        _ => Err("bad play result".into()),
     }
 }
 
 fn parse_input(input: &str) -> Result<Vec<Play>> {
-    Ok(input
-        .lines()
-        .try_fold(Vec::new(), |mut plays, line| {
-            plays.push(Play {
-                opponet: parse_hand(line.as_bytes()[0])?,
-                expected: parse_victory_result(line.as_bytes()[2])?
-            });
-            Ok::<_, Error>(plays)
-        })?)
+    Ok(input.lines().try_fold(Vec::new(), |mut plays, line| {
+        plays.push(Play {
+            opponet: parse_hand(line.as_bytes()[0])?,
+            expected: parse_victory_result(line.as_bytes()[2])?,
+        });
+        Ok::<_, Error>(plays)
+    })?)
 }
 
 fn get_assumed_plan_score(plan: &[Play]) -> i32 {

@@ -55,7 +55,10 @@ fn find_most_calories(elves: &[Elf]) -> i32 {
 }
 
 fn top_highest_calories_total(elves: &[Elf], top_count: usize) -> i32 {
-    let mut calories = elves.iter().map(|elf| elf.total_calories()).collect::<Vec<_>>();
+    let mut calories = elves
+        .iter()
+        .map(|elf| elf.total_calories())
+        .collect::<Vec<_>>();
     calories.sort();
     calories.into_iter().rev().take(top_count).sum()
 }
